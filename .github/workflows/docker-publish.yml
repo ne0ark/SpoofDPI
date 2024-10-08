@@ -2,13 +2,17 @@ name: Check for new SpoofDPI release and build Docker image
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Runs every 5 minutes (you can adjust this)
+    - cron: '*/5 * * * *' # Runs every 6 hours (adjust as needed)
 
 jobs:
   check-new-release:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the repository so you can perform git operations
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Check latest release from SpoofDPI repository
         id: check_release
         run: |
@@ -32,6 +36,7 @@ jobs:
             exit 0
           fi
 
+      # Commit the new release tag to the repository
       - name: Save the new release
         if: env.latest_release
         run: |
@@ -42,6 +47,7 @@ jobs:
           git commit -m "Update latest release to ${{ env.latest_release }}"
           git push
 
+      # Log in to Docker Hub
       - name: Log in to Docker Hub
         if: env.latest_release
         uses: docker/login-action@v3
@@ -49,6 +55,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      # Build and push new Docker image
       - name: Build and push new Docker image
         if: env.latest_release
         uses: docker/build-push-action@v5
