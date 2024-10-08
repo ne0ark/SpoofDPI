@@ -28,5 +28,5 @@ ENV DNS="8.8.8.8"
 ENV DEBUG="false"
 
 # Use the binary directly without specifying the full path, since it's now in PATH
-ENTRYPOINT ["/bin/sh", "-c", "/root/.spoof-dpi/bin/spoof-dpi -addr ${ADDR} -dns-addr ${DNS} -debug ${DEBUG}"]
+ENTRYPOINT ["/bin/sh", "-c", "/root/.spoofdpi/bin/spoofdpi -addr ${ADDR} -dns-addr ${DNS} -debug ${DEBUG}"]
 # CMD ["tail", "-f", "/dev/null"]
