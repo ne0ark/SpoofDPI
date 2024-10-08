@@ -4,7 +4,7 @@ FROM alpine:latest
 WORKDIR /root
 
 # Install required packages
-RUN apk add --no-cache curl bash
+RUN apk add --update --no-cache curl bash
 
 # Download and run the install script for SpoofDPI
 RUN curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh -o install.sh && \
