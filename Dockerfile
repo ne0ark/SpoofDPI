@@ -1,6 +1,9 @@
 # First stage: Build the binary using Go
 FROM golang:alpine AS builder
 
+# Install certificates and update the package repository
+RUN apk add --no-cache ca-certificates
+
 # Set the working directory inside the container
 WORKDIR /go
 
@@ -10,9 +13,11 @@ RUN go install -ldflags '-w -s -extldflags "-static"' -tags timetzdata github.co
 # Second stage: Copy the compiled binary to a minimal image
 FROM scratch
 
-# Copy necessary files from the builder stage
+# Copy the necessary SSL certificates from the builder stage
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+
+# Copy the compiled SpoofDPI binary from the builder stage
 COPY --from=builder /go/bin/spoofdpi /spoofdpi
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # Set default environment variables (can be overridden at runtime)
 ENV ADDR="0.0.0.0"
@@ -20,11 +25,10 @@ ENV DNS="8.8.8.8"
 ENV DEBUG="false"
 ENV DOH="false"
 
-# Create an entrypoint script that constructs the command dynamically
-COPY --from=builder /bin/sh /bin/sh # Ensure /bin/sh is available on scratch
+# Copy the shell for executing the entrypoint script (since scratch has no shell by default)
+COPY --from=builder /bin/sh /bin/sh
 
-COPY /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-# Create the entrypoint script
+# Create an entrypoint script to handle conditional arguments
 COPY <<EOF /entrypoint.sh
 #!/bin/sh
 CMD="/spoofdpi -addr $ADDR -dns-addr $DNS"
