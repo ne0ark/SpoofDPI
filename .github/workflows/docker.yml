@@ -56,15 +56,15 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           # Don't use the cache for release images to ensure everything is up to date
 
-      # Develop branch push, which builds :develop
-      - name: Build and push :develop
+      # main branch push, which builds :main
+      - name: Build and push :main
         if: github.event_name == 'push'
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/spoofdpi:develop
+            ${{ secrets.DOCKER_HUB_USERNAME }}/spoofdpi:main
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           cache-from: type=gha
           cache-to: type=gha,mode=max
