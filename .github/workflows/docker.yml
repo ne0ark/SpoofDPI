@@ -47,18 +47,18 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # Extract metadata (tags, labels) for Docker
-      # https://github.com/docker/metadata-action
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
+    # A new tagged release is published, which builds :tag and :latest
+      - name: Build and push :tag
+        if: github.event_name == 'release'
+        uses: docker/build-push-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          context: .
+          push: true
           tags: |
-              # set latest tag for default branch
-              # type=raw,value=latest,enable={{is_default_branch}}
-              # set main tag for default branch
-              type=raw,value=main,enable={{is_default_branch}}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/auto-southwest-check-in:${{ github.event.release.tag_name }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/auto-southwest-check-in:main
+          platforms: linux/amd64
+          # Don't use the cache for release images to ensure everything is up to date
           
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
