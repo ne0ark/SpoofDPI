@@ -1,8 +1,4 @@
-FROM golang:alpine AS builder
-WORKDIR /go
-RUN go install -ldflags '-w -s -extldflags "-static"' -tags timetzdata github.com/xvzc/SpoofDPI/cmd/spoofdpi@latest
-
-FROM scratch
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /go/bin/spoofdpi /
-ENTRYPOINT ["/bin/sh" "-c" "/spoofdpi -addr ${ADDR} -dns-addr ${DNS} -debug ${DEBUG}"]
+FROM alpine:latest
+RUN apk add --no-cache curl bash
+RUN curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh | bash -s linux-amd64
+CMD [ "/root/.spoof-dpi/bin/spoof-dpi", "-addr", "${ADDR}", "dns-addr", "${DNS}", "-debug", "${DEBUG}"]
