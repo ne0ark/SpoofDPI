@@ -27,10 +27,12 @@ ENV DOH="false"
 
 # Create an entrypoint script to handle conditional arguments
 RUN echo '#!/bin/sh' > /entrypoint.sh && \
+    echo 'VER="/root/.spoofdpi/bin/spoofdpi -v"' >> /root/entrypoint.sh && \
     echo 'CMD="/usr/local/bin/spoofdpi -addr $ADDR -dns-addr $DNS"' >> /entrypoint.sh && \
     echo '[ "$DOH" = "true" ] && CMD="$CMD -enable-doh"' >> /entrypoint.sh && \
     echo '[ "$DEBUG" = "true" ] && CMD="$CMD -debug"' >> /entrypoint.sh && \
     echo 'echo "Running command: $CMD"' >> /entrypoint.sh && \
+    echo '$VER' >> /root/entrypoint.sh && \
     echo 'exec $CMD' >> /entrypoint.sh && \
     chmod +x /entrypoint.sh
 
