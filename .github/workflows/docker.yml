@@ -70,3 +70,14 @@ jobs:
           platforms: linux/amd64
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+          # Cron job: Build and push images every 5 minutes
+      - name: Build and push from cron
+        if: github.event_name == 'schedule'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/spoofdpi:main
+          platforms: linux/amd64
