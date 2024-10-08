@@ -1,19 +1,27 @@
-FROM alpine:latest
+##FROM alpine:latest
 
 # Set the working directory to /root
-WORKDIR /root
+##WORKDIR /root
 
 # Install required packages
-RUN apk add --update --no-cache curl bash
+## RUN apk add --update --no-cache curl bash
 
 # Download and run the install script for SpoofDPI
-RUN curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh -o install.sh && \
-    chmod +x install.sh && \
-    ./install.sh linux-amd64 && \
-    rm -f install.sh
+## RUN curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh -o install.sh && \
+##    chmod +x install.sh && \
+##    ./install.sh linux-amd64 && \
+##    rm -f install.sh
 
 # Add SpoofDPI to PATH
-ENV PATH="$PATH:/root/.spoofdpi/bin"
+## ENV PATH="$PATH:/root/.spoofdpi/bin"
+
+FROM golang:alpine AS builder
+WORKDIR /go
+RUN go install -ldflags '-w -s -extldflags "-static"' -tags timetzdata github.com/xvzc/SpoofDPI/cmd/spoofdpi@latest
+
+FROM scratch
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /go/bin/spoofdpi /
 
 # Set default values for environment variables (can be overridden at runtime)
 ENV ADDR="0.0.0.0"
@@ -33,8 +41,8 @@ RUN echo '#!/bin/sh' > /root/entrypoint.sh && \
     echo 'exec $CMD' >> /root/entrypoint.sh && \
     chmod +x /root/entrypoint.sh
 
-ENTRYPOINT ["/root/entrypoint.sh"]
+# ENTRYPOINT ["/root/entrypoint.sh"]
 
 # Use the binary directly without specifying the full path, since it's now in PATH
 # ENTRYPOINT ["/bin/sh", "-c", "/root/.spoofdpi/bin/spoofdpi -addr ${ADDR} -dns-addr ${DNS} -debug ${DEBUG} -enable-doh ${DOH}"]
-# CMD ["tail", "-f", "/dev/null"]
+CMD ["tail", "-f", "/dev/null"]
