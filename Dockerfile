@@ -5,4 +5,4 @@ RUN go install -ldflags '-w -s -extldflags "-static"' -tags timetzdata github.co
 FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/bin/spoofdpi /
-ENTRYPOINT ["/spoofdpi --addr ${ADDR} --dns ${DNS} --debug ${DEBUG}"]
+ENTRYPOINT ["/spoofdpi -addr ${ADDR} -dns-addr ${DNS} -${DEBUG} -enable-doh"]
