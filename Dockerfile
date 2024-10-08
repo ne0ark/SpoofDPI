@@ -6,4 +6,4 @@ FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/bin/spoofdpi /
 ENTRYPOINT ["/spoofdpi"]
-CMD ["/bin/sh" "-c" "/spoofdpi -addr ${ADDR} -dns ${DNS} -debug ${DEBUG}"]
+CMD ["/bin/sh" "-c" "/spoofdpi -addr ${ADDR} -dns-addr ${DNS} -debug ${DEBUG}"]
