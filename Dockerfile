@@ -12,6 +12,10 @@ RUN curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh -
     ./install.sh linux-amd64 && \
     rm -f install.sh
 
+# Check if the binary exists at /root/.spoofdpi/bin/
+RUN ls -la /root/.spoofdpi/bin/
+RUN ls -la ~
+
 # Add SpoofDPI to PATH
 ENV PATH="$PATH:/root/.spoofdpi/bin"
 
