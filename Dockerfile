@@ -1,21 +1,14 @@
-# First stage: Build the binary using Go
 FROM golang:alpine AS builder
-
-# Install certificates and update the package repository
-RUN apk add --no-cache ca-certificates
-
-# Set the working directory inside the container
 WORKDIR /go
-
-# Install the SpoofDPI binary with static linking
 RUN go install -ldflags '-w -s -extldflags "-static"' -tags timetzdata github.com/xvzc/SpoofDPI/cmd/spoofdpi@latest
+
 
 # Second stage: Use a minimal Alpine image
 FROM alpine:latest
 
 # Install ca-certificates in the final image
 RUN apk add --no-cache ca-certificates
-
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 # Copy the compiled SpoofDPI binary from the builder stage
 COPY --from=builder /go/bin/spoofdpi /usr/local/bin/spoofdpi
 
