@@ -5,12 +5,10 @@ on:
     - cron: '0 3 * * *'
   release:
     types: [published]
-  pull_request:
-    branches: [ "main" ]
+
   push:
     branches:
       - main
-    tags: [ 'v*.*.*' ]
     # Only build the image when a file in the image is updated
     # These paths are files in the git repository from
     # .dockerignore (except the Docker files)
@@ -47,7 +45,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    # A new tagged release is published, which builds :tag and :latest
+      # A new tagged release is published, which builds :tag and :latest
       - name: Build and push :tag
         if: github.event_name == 'release'
         uses: docker/build-push-action@v5
@@ -55,19 +53,20 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/auto-southwest-check-in:${{ github.event.release.tag_name }}
-            ${{ secrets.DOCKER_HUB_USERNAME }}/auto-southwest-check-in:main
+            ${{ secrets.DOCKER_HUB_USERNAME }}/spoofdpi:${{ github.event.release.tag_name }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/spoofdpi:latest
           platforms: linux/amd64
           # Don't use the cache for release images to ensure everything is up to date
-          
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
-        id: build-and-push
-        uses: docker/build-push-action@v6
+
+      # main branch push, which builds :main
+      - name: Build and push :main
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v5
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          no-cache: true
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/spoofdpi:main
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
