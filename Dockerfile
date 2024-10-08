@@ -1,10 +1,18 @@
+FROM golang:alpine AS builder
+WORKDIR /go
+RUN go install -ldflags '-w -s -extldflags "-static"' -tags timetzdata github.com/xvzc/SpoofDPI/cmd/spoofdpi@latest
+
+FROM scratch
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /go/bin/spoofdpi /
+
 ##FROM alpine:latest
 
 # Set the working directory to /root
 ##WORKDIR /root
 
 # Install required packages
-## RUN apk add --update --no-cache curl bash
+RUN apk add --update --no-cache curl bash
 
 # Download and run the install script for SpoofDPI
 ## RUN curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh -o install.sh && \
@@ -14,14 +22,6 @@
 
 # Add SpoofDPI to PATH
 ## ENV PATH="$PATH:/root/.spoofdpi/bin"
-
-FROM golang:alpine AS builder
-WORKDIR /go
-RUN go install -ldflags '-w -s -extldflags "-static"' -tags timetzdata github.com/xvzc/SpoofDPI/cmd/spoofdpi@latest
-
-FROM scratch
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /go/bin/spoofdpi /
 
 # Set default values for environment variables (can be overridden at runtime)
 ENV ADDR="0.0.0.0"
