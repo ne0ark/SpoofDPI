@@ -24,6 +24,7 @@ ENV ADDR="0.0.0.0"
 ENV DNS="8.8.8.8"
 ENV DEBUG="false"
 ENV DOH="false"
+ENV WINDOW=""
 
 # Create an entrypoint script to handle conditional arguments
 RUN echo '#!/bin/sh' > /entrypoint.sh && \
@@ -31,6 +32,7 @@ RUN echo '#!/bin/sh' > /entrypoint.sh && \
     echo 'CMD="/usr/local/bin/spoofdpi -addr $ADDR -dns-addr $DNS"' >> /entrypoint.sh && \
     echo '[ "$DOH" = "true" ] && CMD="$CMD -enable-doh"' >> /entrypoint.sh && \
     echo '[ "$DEBUG" = "true" ] && CMD="$CMD -debug"' >> /entrypoint.sh && \
+    echo '[ ! -z "$WINDOW_SIZE" ] && CMD="$CMD -window-size $WINDOW"' >> /entrypoint.sh && \
     echo 'echo "Running command: $CMD"' >> /entrypoint.sh && \
     echo '$VER' >> /entrypoint.sh && \
     echo 'exec $CMD' >> /entrypoint.sh && \
