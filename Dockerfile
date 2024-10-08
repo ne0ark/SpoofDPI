@@ -23,7 +23,7 @@ COPY --from=builder /go/bin/spoofdpi /usr/local/bin/spoofdpi
 ENV ADDR="0.0.0.0"
 ENV DNS="8.8.8.8"
 ENV DEBUG="false"
-ENV DOH="false"
+ENV DOH="true"
 ENV WINDOW=""
 
 # Create an entrypoint script to handle conditional arguments
