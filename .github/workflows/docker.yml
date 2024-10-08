@@ -16,6 +16,7 @@ on:
       - ".devcontainer/**"
       - ".editorconfig"
       - ".github/**"
+      - ".last_release"
       - "!.github/workflows/docker.yml" # Still run on changes to this file
       - ".gitignore"
       - ".pre-commit-config.yaml"
