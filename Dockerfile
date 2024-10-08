@@ -12,10 +12,6 @@ RUN curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh -
     ./install.sh linux-amd64 && \
     rm -f install.sh
 
-# Check if the binary exists at /root/.spoofdpi/bin/
-RUN ls -la /root/.spoofdpi/bin/
-RUN ls -la ~
-
 # Add SpoofDPI to PATH
 ENV PATH="$PATH:/root/.spoofdpi/bin"
 
@@ -25,4 +21,5 @@ ENV DNS="8.8.8.8"
 ENV DEBUG="false"
 
 # Use the binary directly without specifying the full path, since it's now in PATH
-ENTRYPOINT ["/bin/sh", "-c", "spoof-dpi -addr ${ADDR} -dns-addr ${DNS} -debug ${DEBUG}"]
+# ENTRYPOINT ["/bin/sh", "-c", "spoof-dpi -addr ${ADDR} -dns-addr ${DNS} -debug ${DEBUG}"]
+CMD ["/bin/sh"]
