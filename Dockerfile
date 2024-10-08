@@ -2,7 +2,6 @@ FROM golang:alpine AS builder
 WORKDIR /go
 RUN go install -ldflags '-w -s -extldflags "-static"' -tags timetzdata github.com/xvzc/SpoofDPI/cmd/spoofdpi@latest
 
-
 # Second stage: Use a minimal Alpine image
 FROM alpine:latest
 
