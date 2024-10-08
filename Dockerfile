@@ -5,4 +5,4 @@ RUN curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh |
 ENV ADDR="0.0.0.0"
 ENV DNS="8.8.8.8"
 ENV DEBUG="false"
-ENTRYPOINT ["/bin/sh", "-c", "/root/.spoof-dpi/bin/spoof-dpi -addr ${ADDR} -dns-addr ${DNS} -debug ${DEBUG}"]
+ENTRYPOINT ["/bin/sh", "-c", ".spoof-dpi/bin/spoof-dpi -addr ${ADDR} -dns-addr ${DNS} -debug ${DEBUG}"]
