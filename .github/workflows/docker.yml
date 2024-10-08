@@ -3,13 +3,10 @@ name: Build and Publish Docker Images
 on:
   schedule:
     - cron: '0 3 * * *'
-  
   release:
     types: [published]
-    
   pull_request:
     branches: [ "main" ]
-
   push:
     branches:
       - main
@@ -30,9 +27,6 @@ on:
       - "pyproject.toml"
       - "setup.cfg"
       - "tests/**"
-  
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build-and-push-images:
