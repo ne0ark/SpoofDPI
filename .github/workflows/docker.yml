@@ -6,7 +6,7 @@ on:
 
   push:
     branches:
-      - develop
+      - master
     # Only build the image when a file in the image is updated
     # These paths are files in the git repository from
     # .dockerignore (except the Docker files)
