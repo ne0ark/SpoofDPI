@@ -14,6 +14,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh -
 
 # Add SpoofDPI to PATH
 ENV PATH="$PATH:/root/.spoofdpi/bin"
+RUN ls -l /root/.spoofdpi/bin/
 
 # Set default values for environment variables (can be overridden at runtime)
 ENV ADDR="0.0.0.0"
