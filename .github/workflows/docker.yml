@@ -53,7 +53,7 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/spoofdpi:${{ github.event.release.tag_name }}
             ${{ secrets.DOCKER_HUB_USERNAME }}/spoofdpi:latest
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64
           # Don't use the cache for release images to ensure everything is up to date
 
       # main branch push, which builds :main
@@ -65,6 +65,6 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/spoofdpi:main
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64
           cache-from: type=gha
           cache-to: type=gha,mode=max
