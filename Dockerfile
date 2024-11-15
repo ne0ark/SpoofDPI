@@ -6,7 +6,7 @@ RUN go install -ldflags '-w -s -extldflags "-static"' -tags timetzdata github.co
 FROM alpine:latest
 
 # Install ca-certificates in the final image
-RUN apk add --no-cache ca-certificates
+RUN apk add --update --no-cach ca-certificates
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 # Copy the compiled SpoofDPI binary from the builder stage
 COPY --from=builder /go/bin/spoofdpi /usr/local/bin/spoofdpi
