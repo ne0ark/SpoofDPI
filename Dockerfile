@@ -13,7 +13,7 @@ COPY --from=builder /go/bin/spoofdpi /usr/local/bin/spoofdpi
 
 # Set default environment variables (can be overridden at runtime)
 ENV ADDR="0.0.0.0"
-ENV DNS="8.8.8.8"
+ENV DNS="8.8.8.8:53"
 ENV DEBUG="false"
 ENV DOH="true"
 ENV WINDOW=""
