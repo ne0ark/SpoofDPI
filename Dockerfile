@@ -22,7 +22,7 @@ ENV TIMEOUT=""
 # Create an entrypoint script to handle conditional arguments
 RUN echo '#!/bin/sh' > /entrypoint.sh && \
     echo 'VER="/usr/local/bin/spoofdpi -v"' >> /entrypoint.sh && \
-    echo 'CMD="/usr/local/bin/spoofdpi -addr $ADDR -dns-addr $DNS"' >> /entrypoint.sh && \
+    echo 'CMD="/usr/local/bin/spoofdpi -dns-addr $DNS"' >> /entrypoint.sh && \
     echo '[ "$DOH" = "true" ] && CMD="$CMD -enable-doh"' >> /entrypoint.sh && \
     echo '[ "$DEBUG" = "true" ] && CMD="$CMD -debug"' >> /entrypoint.sh && \
     echo '[ ! -z "$WINDOW" ] && CMD="$CMD -window-size $WINDOW"' >> /entrypoint.sh && \
