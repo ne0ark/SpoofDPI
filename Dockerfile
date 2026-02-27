@@ -14,10 +14,10 @@ ENV PGID="100"
 ENV TZ="UTC"
 
 # SpoofDPI runtime defaults
-ENV ADDR="0.0.0.0"
-ENV PORT="8080"
+ENV LISTEN_ADDR="0.0.0.0:8080"
 ENV DNS_ADDR="8.8.8.8"
 ENV DNS_PORT="53"
+ENV DNS_QTYPE="all"
 ENV DEBUG="false"
 ENV DOH="true"
 ENV WINDOW=""
@@ -61,10 +61,10 @@ pick_flag() {
   return 1
 }
 
-ADDR_FLAG="$(pick_flag -addr --addr || true)"
-PORT_FLAG="$(pick_flag -port --port || true)"
+LISTEN_ADDR_FLAG="$(pick_flag -listen-addr --listen-addr || true)"
 DNS_ADDR_FLAG="$(pick_flag -dns-addr --dns-addr || true)"
 DNS_PORT_FLAG="$(pick_flag -dns-port --dns-port || true)"
+DNS_QTYPE_FLAG="$(pick_flag -dns-qtype --dns-qtype || true)"
 DNS_ADDR_VALUE="$DNS_ADDR"
 if [ -n "$DNS_ADDR_FLAG" ] && [ -z "$DNS_PORT_FLAG" ] && [ -n "$DNS_PORT" ]; then
   DNS_ADDR_VALUE="${DNS_ADDR}:${DNS_PORT}"
@@ -78,10 +78,10 @@ SILENT_FLAG="$(pick_flag -silent --silent || true)"
 POLICY_AUTO_FLAG="$(pick_flag -policy-auto --policy-auto || true)"
 
 set -- /usr/local/bin/spoofdpi
-[ -n "$ADDR_FLAG" ] && [ -n "$ADDR" ] && set -- "$@" "$ADDR_FLAG" "$ADDR"
-[ -n "$PORT_FLAG" ] && [ -n "$PORT" ] && set -- "$@" "$PORT_FLAG" "$PORT"
+[ -n "$LISTEN_ADDR_FLAG" ] && [ -n "$LISTEN_ADDR" ] && set -- "$@" "$LISTEN_ADDR_FLAG" "$LISTEN_ADDR"
 [ -n "$DNS_ADDR_FLAG" ] && [ -n "$DNS_ADDR_VALUE" ] && set -- "$@" "$DNS_ADDR_FLAG" "$DNS_ADDR_VALUE"
 [ -n "$DNS_PORT_FLAG" ] && [ -n "$DNS_PORT" ] && set -- "$@" "$DNS_PORT_FLAG" "$DNS_PORT"
+[ -n "$DNS_QTYPE_FLAG" ] && [ -n "$DNS_QTYPE" ] && set -- "$@" "$DNS_QTYPE_FLAG" "$DNS_QTYPE"
 [ -n "$SYSTEM_PROXY_FLAG" ] && set -- "$@" "$SYSTEM_PROXY_FLAG=$SYSTEM_PROXY"
 
 [ "$DOH" = "true" ] && [ -n "$DOH_FLAG" ] && set -- "$@" "$DOH_FLAG"
