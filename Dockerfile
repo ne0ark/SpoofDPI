@@ -24,7 +24,7 @@ ENV WINDOW=""
 ENV TIMEOUT=""
 ENV SYSTEM_PROXY="false"
 ENV SILENT="false"
-ENV POLICY_AUTO="false"
+ENV POLICY_AUTO="true"
 ENV EXTRA_ARGS=""
 
 RUN cat > /entrypoint.sh <<'EOS'
@@ -33,11 +33,19 @@ set -e
 
 ln -snf "/usr/share/zoneinfo/${TZ}" /etc/localtime && echo "${TZ}" > /etc/timezone
 
-if ! grep -q "^app:" /etc/group; then
-  addgroup -g "$PGID" -S app
+GROUP_NAME="$(awk -F: -v gid="$PGID" '$3 == gid { print $1; exit }' /etc/group)"
+if [ -z "$GROUP_NAME" ]; then
+  GROUP_NAME="app"
+  addgroup -g "$PGID" -S "$GROUP_NAME"
 fi
-if ! grep -q "^app:" /etc/passwd; then
-  adduser -u "$PUID" -S -D -H -G app app
+
+USER_NAME="$(awk -F: -v uid="$PUID" '$3 == uid { print $1; exit }' /etc/passwd)"
+if [ -z "$USER_NAME" ]; then
+  USER_NAME="app"
+  if grep -q "^${USER_NAME}:" /etc/passwd; then
+    USER_NAME="spoofdpi"
+  fi
+  adduser -u "$PUID" -S -D -H -G "$GROUP_NAME" "$USER_NAME"
 fi
 
 /usr/local/bin/spoofdpi -v
@@ -58,7 +66,7 @@ set -- /usr/local/bin/spoofdpi \
 [ -n "$EXTRA_ARGS" ] && set -- "$@" $EXTRA_ARGS
 
 echo "Running command: $*"
-exec su-exec app "$@"
+exec su-exec "$USER_NAME" "$@"
 EOS
 
 RUN chmod +x /entrypoint.sh
