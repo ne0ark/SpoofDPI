@@ -18,8 +18,7 @@ ENV LISTEN_ADDR="0.0.0.0:8080"
 ENV DNS_ADDR="8.8.8.8"
 ENV DNS_PORT="53"
 ENV DNS_QTYPE="all"
-ENV DEBUG="false"
-ENV DOH="true"
+ENV LOG_LEVEL=""
 ENV WINDOW=""
 ENV TIMEOUT=""
 ENV SYSTEM_PROXY="false"
@@ -72,10 +71,9 @@ fi
 WINDOW_FLAG="$(pick_flag -window-size --window-size || true)"
 TIMEOUT_FLAG="$(pick_flag -timeout --timeout || true)"
 SYSTEM_PROXY_FLAG="$(pick_flag -system-proxy --system-proxy || true)"
-DOH_FLAG="$(pick_flag -enable-doh --enable-doh || true)"
-DEBUG_FLAG="$(pick_flag -debug --debug || true)"
 SILENT_FLAG="$(pick_flag -silent --silent || true)"
 POLICY_AUTO_FLAG="$(pick_flag -policy-auto --policy-auto || true)"
+LOG_LEVEL_FLAG="$(pick_flag -log-level --log-level || true)"
 
 set -- /usr/local/bin/spoofdpi
 [ -n "$LISTEN_ADDR_FLAG" ] && [ -n "$LISTEN_ADDR" ] && set -- "$@" "$LISTEN_ADDR_FLAG" "$LISTEN_ADDR"
@@ -84,10 +82,9 @@ set -- /usr/local/bin/spoofdpi
 [ -n "$DNS_QTYPE_FLAG" ] && [ -n "$DNS_QTYPE" ] && set -- "$@" "$DNS_QTYPE_FLAG" "$DNS_QTYPE"
 [ -n "$SYSTEM_PROXY_FLAG" ] && set -- "$@" "$SYSTEM_PROXY_FLAG=$SYSTEM_PROXY"
 
-[ "$DOH" = "true" ] && [ -n "$DOH_FLAG" ] && set -- "$@" "$DOH_FLAG"
-[ "$DEBUG" = "true" ] && [ -n "$DEBUG_FLAG" ] && set -- "$@" "$DEBUG_FLAG"
 [ "$SILENT" = "true" ] && [ -n "$SILENT_FLAG" ] && set -- "$@" "$SILENT_FLAG"
 [ "$POLICY_AUTO" = "true" ] && [ -n "$POLICY_AUTO_FLAG" ] && set -- "$@" "$POLICY_AUTO_FLAG"
+[ -n "$LOG_LEVEL" ] && [ -n "$LOG_LEVEL_FLAG" ] && set -- "$@" "$LOG_LEVEL_FLAG" "$LOG_LEVEL"
 [ -n "$WINDOW" ] && [ -n "$WINDOW_FLAG" ] && set -- "$@" "$WINDOW_FLAG" "$WINDOW"
 [ -n "$TIMEOUT" ] && [ -n "$TIMEOUT_FLAG" ] && set -- "$@" "$TIMEOUT_FLAG" "$TIMEOUT"
 [ -n "$EXTRA_ARGS" ] && set -- "$@" $EXTRA_ARGS
