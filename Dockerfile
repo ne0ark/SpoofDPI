@@ -65,6 +65,10 @@ ADDR_FLAG="$(pick_flag -addr --addr || true)"
 PORT_FLAG="$(pick_flag -port --port || true)"
 DNS_ADDR_FLAG="$(pick_flag -dns-addr --dns-addr || true)"
 DNS_PORT_FLAG="$(pick_flag -dns-port --dns-port || true)"
+DNS_ADDR_VALUE="$DNS_ADDR"
+if [ -n "$DNS_ADDR_FLAG" ] && [ -z "$DNS_PORT_FLAG" ] && [ -n "$DNS_PORT" ]; then
+  DNS_ADDR_VALUE="${DNS_ADDR}:${DNS_PORT}"
+fi
 WINDOW_FLAG="$(pick_flag -window-size --window-size || true)"
 TIMEOUT_FLAG="$(pick_flag -timeout --timeout || true)"
 SYSTEM_PROXY_FLAG="$(pick_flag -system-proxy --system-proxy || true)"
@@ -76,7 +80,7 @@ POLICY_AUTO_FLAG="$(pick_flag -policy-auto --policy-auto || true)"
 set -- /usr/local/bin/spoofdpi
 [ -n "$ADDR_FLAG" ] && [ -n "$ADDR" ] && set -- "$@" "$ADDR_FLAG" "$ADDR"
 [ -n "$PORT_FLAG" ] && [ -n "$PORT" ] && set -- "$@" "$PORT_FLAG" "$PORT"
-[ -n "$DNS_ADDR_FLAG" ] && [ -n "$DNS_ADDR" ] && set -- "$@" "$DNS_ADDR_FLAG" "$DNS_ADDR"
+[ -n "$DNS_ADDR_FLAG" ] && [ -n "$DNS_ADDR_VALUE" ] && set -- "$@" "$DNS_ADDR_FLAG" "$DNS_ADDR_VALUE"
 [ -n "$DNS_PORT_FLAG" ] && [ -n "$DNS_PORT" ] && set -- "$@" "$DNS_PORT_FLAG" "$DNS_PORT"
 [ -n "$SYSTEM_PROXY_FLAG" ] && set -- "$@" "$SYSTEM_PROXY_FLAG=$SYSTEM_PROXY"
 
