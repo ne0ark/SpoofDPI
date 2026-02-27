@@ -49,20 +49,43 @@ if [ -z "$USER_NAME" ]; then
 fi
 
 /usr/local/bin/spoofdpi -v
+HELP_TEXT="$(/usr/local/bin/spoofdpi -h 2>&1 || true)"
 
-set -- /usr/local/bin/spoofdpi \
-  --addr "$ADDR" \
-  --port "$PORT" \
-  --dns-addr "$DNS_ADDR" \
-  --dns-port "$DNS_PORT" \
-  --system-proxy="$SYSTEM_PROXY"
+pick_flag() {
+  for candidate in "$@"; do
+    if printf ' %s ' "$HELP_TEXT" | tr '\n' ' ' | grep -q -- " $candidate "; then
+      printf '%s' "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
 
-[ "$DOH" = "true" ] && set -- "$@" --enable-doh
-[ "$DEBUG" = "true" ] && set -- "$@" --debug
-[ "$SILENT" = "true" ] && set -- "$@" --silent
-[ "$POLICY_AUTO" = "true" ] && set -- "$@" --policy-auto
-[ -n "$WINDOW" ] && set -- "$@" --window-size "$WINDOW"
-[ -n "$TIMEOUT" ] && set -- "$@" --timeout "$TIMEOUT"
+ADDR_FLAG="$(pick_flag -addr --addr || true)"
+PORT_FLAG="$(pick_flag -port --port || true)"
+DNS_ADDR_FLAG="$(pick_flag -dns-addr --dns-addr || true)"
+DNS_PORT_FLAG="$(pick_flag -dns-port --dns-port || true)"
+WINDOW_FLAG="$(pick_flag -window-size --window-size || true)"
+TIMEOUT_FLAG="$(pick_flag -timeout --timeout || true)"
+SYSTEM_PROXY_FLAG="$(pick_flag -system-proxy --system-proxy || true)"
+DOH_FLAG="$(pick_flag -enable-doh --enable-doh || true)"
+DEBUG_FLAG="$(pick_flag -debug --debug || true)"
+SILENT_FLAG="$(pick_flag -silent --silent || true)"
+POLICY_AUTO_FLAG="$(pick_flag -policy-auto --policy-auto || true)"
+
+set -- /usr/local/bin/spoofdpi
+[ -n "$ADDR_FLAG" ] && [ -n "$ADDR" ] && set -- "$@" "$ADDR_FLAG" "$ADDR"
+[ -n "$PORT_FLAG" ] && [ -n "$PORT" ] && set -- "$@" "$PORT_FLAG" "$PORT"
+[ -n "$DNS_ADDR_FLAG" ] && [ -n "$DNS_ADDR" ] && set -- "$@" "$DNS_ADDR_FLAG" "$DNS_ADDR"
+[ -n "$DNS_PORT_FLAG" ] && [ -n "$DNS_PORT" ] && set -- "$@" "$DNS_PORT_FLAG" "$DNS_PORT"
+[ -n "$SYSTEM_PROXY_FLAG" ] && set -- "$@" "$SYSTEM_PROXY_FLAG=$SYSTEM_PROXY"
+
+[ "$DOH" = "true" ] && [ -n "$DOH_FLAG" ] && set -- "$@" "$DOH_FLAG"
+[ "$DEBUG" = "true" ] && [ -n "$DEBUG_FLAG" ] && set -- "$@" "$DEBUG_FLAG"
+[ "$SILENT" = "true" ] && [ -n "$SILENT_FLAG" ] && set -- "$@" "$SILENT_FLAG"
+[ "$POLICY_AUTO" = "true" ] && [ -n "$POLICY_AUTO_FLAG" ] && set -- "$@" "$POLICY_AUTO_FLAG"
+[ -n "$WINDOW" ] && [ -n "$WINDOW_FLAG" ] && set -- "$@" "$WINDOW_FLAG" "$WINDOW"
+[ -n "$TIMEOUT" ] && [ -n "$TIMEOUT_FLAG" ] && set -- "$@" "$TIMEOUT_FLAG" "$TIMEOUT"
 [ -n "$EXTRA_ARGS" ] && set -- "$@" $EXTRA_ARGS
 
 echo "Running command: $*"
